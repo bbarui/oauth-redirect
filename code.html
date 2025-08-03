@@ -15,6 +15,7 @@
     pre {
       white-space: pre-wrap;
       word-break: break-word;
+      margin-bottom: 2rem;
     }
     .key       { color: #9cdcfe; }
     .string    { color: #ce9178; }
@@ -23,10 +24,17 @@
     .null      { color: #808080; }
     .access    { color: #00ff7f; font-weight: bold; }
     .refresh   { color: #ffa500; font-weight: bold; }
+    .note      {
+      color: #6a9955;
+      font-style: italic;
+      border-top: 1px solid #333;
+      padding-top: 0.5rem;
+    }
   </style>
 </head>
 <body>
   <pre id="json"></pre>
+  <div class="note">✅ All necessary information was received successfully.</div>
 
   <script>
     const params = new URLSearchParams(location.search);
@@ -38,8 +46,7 @@
       const formatted = JSON.stringify(obj, null, 2);
       const highlighted = formatted.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(?=\s*:))|("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*")|(\btrue\b|\bfalse\b|null)|(-?\d+(?:\.\d+)?(?:[eE][+-]?\d+)?)/g, function (match) {
         if (/^"/.test(match)) {
-          if (/:$/.test(match)) return `<span class="key">${match}</span>`; // it's a key
-          // it's a string value — check key context
+          if (/:$/.test(match)) return `<span class="key">${match}</span>`;
           return match;
         }
         if (/true|false/.test(match)) return `<span class="boolean">${match}</span>`;
@@ -47,7 +54,6 @@
         return `<span class="number">${match}</span>`;
       });
 
-      // Inject special styling for token values
       return highlighted
         .replace(/("access_token":\s*)"([^"]*)"/, (_, key, value) =>
           `${key}"<span class="access">${value}</span>"`)
@@ -59,6 +65,7 @@
       pre.innerHTML = syntaxHighlight(raw);
     } catch {
       pre.textContent = 'Invalid or missing JSON.';
+      document.querySelector('.note').textContent = '';
     }
   </script>
 </body>
