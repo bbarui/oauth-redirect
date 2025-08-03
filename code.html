@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>JSON Viewer</title>
+  <style>
+    body {
+      font-family: monospace;
+      background-color: #1e1e1e;
+      color: #dcdcdc;
+      padding: 2rem;
+    }
+    pre {
+      white-space: pre-wrap;
+      word-break: break-word;
+      background: #2e2e2e;
+      padding: 1rem;
+      border-radius: 8px;
+    }
+    .error {
+      color: #ff5555;
+    }
+  </style>
+</head>
+<body>
+  <h2>Supplied JSON</h2>
+  <pre id="output"></pre>
+
+  <script>
+    function getQueryParam(name) {
+      const params = new URLSearchParams(window.location.search);
+      return params.get(name);
+    }
+
+    function displayJSON() {
+      const raw = getQueryParam("json");
+      const output = document.getElementById("output");
+
+      if (!raw) {
+        output.textContent = "No JSON provided in 'json' GET parameter.";
+        return;
+      }
+
+      try {
+        const obj = JSON.parse(raw);
+        output.textContent = JSON.stringify(obj, null, 2);
+      } catch (err) {
+        output.innerHTML = `<span class="error">Error parsing JSON:</span>\n${err}`;
+      }
+    }
+
+    displayJSON();
+  </script>
+</body>
+</html>
